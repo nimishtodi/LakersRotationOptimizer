@@ -2,63 +2,88 @@
 
 A small Python project for optimizing a 48-minute Lakers rotation from projected five-man lineup ratings.
 
-The project answers one practical question: given a pool of rated lineups and realistic rotation rules, what minute-by-minute rotation produces the highest projected net rating?
+The optimizer scores a rotation by assigning a projected net rating to each five-man lineup and averaging those ratings by minutes played. It also validates practical rotation rules such as minute caps, starter eligibility, and closing lineup requirements.
 
-## Repository contents
+## Files
 
-- `optimizer.py` - scoring, validation, local-search optimization, and segment-grid MILP optimization.
-- `lineup_ratings_active.csv` - active lineup pool used by the optimizer. Contains **93** lineups.
-- `lineup_ratings_all.csv` - audit trail of all captured lineups. Contains **103** lineups, including obsolete or superseded entries.
+- `optimizer.py` - scoring, validation, and a simple local-search optimizer.
+- `lineup_ratings_active.csv` - active lineup ratings used by the optimizer.
+- `lineup_ratings_all.csv` - lineup rating audit table.
 - `constraints.json` - editable rotation constraints.
-- `current_rotation.csv` - current seed rotation, projected at about **+11.99**.
-- `first9_luka_variant.csv` - comparison variant where Luka plays at least the first 9 minutes of the 1st and 3rd quarters.
-
-## Current model setup
-
-The optimizer uses regular-season workload limits, including Luka 36, Reaves 36, Kessler 34, Grimes 32, Sandro 28, Vanderbilt 28, LaRavia 28, Sexton 28, Looney 24, Thiero 24, and Ziaire 24.
-
-The model also enforces starter realism, stint rules, rest rules, and a closing-lineup rule. The starter must include Luka, Reaves, and Kessler; must be rated at least +10; and cannot include Thiero, Looney, or Ziaire. The final 4 minutes use Luka / Reaves / Vanderbilt / Sandro / Kessler.
-
-## How the optimizer works
-
-A rotation is represented as a sequence of lineups covering all 48 minutes. Each lineup has a projected net rating. The objective is:
-
-```text
-maximize sum(lineup_rating * lineup_minutes) / 48
-```
-
-`optimizer.py` supports two optimization modes:
-
-1. `local` - randomized free-minute local search from the current seed rotation.
-2. `milp-segment` - exact mixed-integer optimization over a segment grid using scipy.
-
-The validator checks player minute caps, half caps, minimum stints, maximum stints, rest after max stints, lineup segment length, starter rules, rotation size, and the closing lineup.
-
-
-## Fidelity to the conversation model
-
-The default validation and `--mode local` path matches the latest working free-minute model used for the +11.99 rotation. The `--mode milp-segment` path is a faster segment-grid approximation for diagnostics, not the full experimental minute-level MILP from the chat. See `FIDELITY_NOTES.md` for the exact comparison.
+- `current_rotation.csv` - current +11.99 seed rotation.
+- `first9_luka_variant.csv` - comparison variant file.
 
 ## Usage
 
-Validate the current seed rotation:
+Validate the current rotation:
 
 ```bash
 python optimizer.py
 ```
 
-Run free-minute local search:
+Run local search from the current seed:
 
 ```bash
 python optimizer.py --mode local --iterations 200000 --seed 7
 ```
 
-Run segment-grid MILP:
+## Current seed result
 
-```bash
-python optimizer.py --mode milp-segment --time-limit 120
+The current seed rotation projects around **+11.99** and uses a 10-man rotation.
+
+## Constraint reference
+
+### Player minute limits
+
+| Player | Minimum | Maximum |
+|---|---:|---:|
+| Luka | 24 | 36 |
+| Reaves | 24 | 36 |
+| Kessler | 24 | 34 |
+| Grimes | 0 | 32 |
+| Sandro | 0 | 28 |
+| Vanderbilt | 0 | 28 |
+| LaRavia | 0 | 28 |
+| Sexton | 0 | 28 |
+| Looney | 0 | 24 |
+| Thiero | 0 | 24 |
+| Ziaire | 0 | 24 |
+
+### Per-half limits
+
+Each player's per-half cap is:
+
+```text
+ceil(player_max_minutes / 2) + 1
 ```
 
-## Notes
+### Stint and rest rules
 
-This is a research script, not a polished production solver. The lineup ratings are static inputs, and small differences in projected net rating should not be overinterpreted.
+- Player stint minimum: 4 minutes.
+- Lineup segment minimum: 2 minutes.
+- Standard max player stint: 12 minutes.
+- Vanderbilt max player stint: 9 minutes.
+- Minimum rest between separate stints inside a half: 2 minutes.
+- If a player completes a max-length stint and later returns in the same half, the player must rest at least 4 minutes before returning.
+- If a player is about to play a max-length stint and that stint does not begin at the start of a half, the player must have rested at least 4 minutes before that stint.
+- Halftime resets stint and rest tracking.
+
+### Starter rules
+
+- The same starter lineup must start both halves.
+- The starter lineup must include Luka, Reaves, and Kessler.
+- The starter lineup must have a projected net rating of at least +10.
+- Thiero, Looney, and Ziaire cannot be starters.
+
+### Closing rule
+
+The final 4 minutes must use:
+
+```text
+Luka / Reaves / Vanderbilt / Sandro / Kessler
+```
+
+### Rotation size
+
+- Minimum players used: 8.
+- Maximum players used: 11.
