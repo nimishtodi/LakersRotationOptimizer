@@ -1,0 +1,14 @@
+start_minute,end_minute,lineup,rating,rating_minutes
+0,5,Luka/Reaves/Grimes/Sandro/Kessler,12.91,64.55
+5,7,Luka/Reaves/Grimes/Sandro/Looney,11.1,22.2
+7,12,Luka/Grimes/LaRavia/Vanderbilt/Looney,11.09,55.45
+12,16,Reaves/Sexton/LaRavia/Vanderbilt/Kessler,10.55,42.2
+16,20,Reaves/Grimes/LaRavia/Sandro/Looney,10.75,43.0
+20,24,Luka/Reaves/Vanderbilt/Sandro/Kessler,14.01,56.04
+24,29,Luka/Reaves/Grimes/Sandro/Kessler,12.91,64.55
+29,31,Luka/Reaves/Grimes/Sandro/Looney,11.1,22.2
+31,36,Luka/Grimes/LaRavia/Vanderbilt/Looney,11.09,55.45
+36,40,Reaves/Sexton/LaRavia/Vanderbilt/Kessler,10.55,42.2
+40,42,Luka/Reaves/Grimes/Thiero/Kessler,9.0,18.0
+42,44,Luka/Grimes/Thiero/Sandro/Kessler,13.0,26.0
+44,48,Luka/Reaves/Vanderbilt/Sandro/Kessler,14.01,56.04
