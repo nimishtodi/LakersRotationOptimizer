@@ -1,0 +1,46 @@
+{
+  "minute_caps": {
+    "Luka": 36,
+    "Reaves": 36,
+    "Kessler": 34,
+    "Grimes": 32,
+    "Sandro": 28,
+    "Vanderbilt": 28,
+    "LaRavia": 28,
+    "Sexton": 28,
+    "Looney": 24,
+    "Thiero": 24,
+    "Ziaire": 24
+  },
+  "minimum_minutes": {
+    "Luka": 24,
+    "Reaves": 24,
+    "Kessler": 24
+  },
+  "half_cap_formula": "ceil(max_minutes / 2) + 1",
+  "player_min_stint": 4,
+  "lineup_min_segment": 2,
+  "max_stint_default": 12,
+  "max_stint_overrides": {
+    "Vanderbilt": 9
+  },
+  "max_stint_recovery_minutes": 4,
+  "minimum_rest_minutes": 2,
+  "rotation_size_min": 8,
+  "rotation_size_max": 11,
+  "starter_rules": {
+    "same_starters_both_halves": true,
+    "must_include": [
+      "Luka",
+      "Reaves",
+      "Kessler"
+    ],
+    "minimum_rating": 10,
+    "cannot_include": [
+      "Thiero",
+      "Looney",
+      "Ziaire"
+    ]
+  },
+  "closing_lineup": "Luka/Reaves/Vanderbilt/Sandro/Kessler"
+}
